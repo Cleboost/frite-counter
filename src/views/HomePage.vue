@@ -13,12 +13,14 @@ import {
   IonItem,
   IonFabButton,
   IonFab,
-  IonAlert,
+  IonAlert, onIonViewWillEnter, alertController,
 } from '@ionic/vue';
 import { add } from "ionicons/icons";
 import { ref } from "vue";
 import { onMounted } from 'vue';
+import {getVersionApp} from "@/data/version";
 
+const versionApp = getVersionApp();
 const list = ref(<string[]>[]);
 const showResetPop = ref(false);
 const resetPopButtons = [
@@ -77,6 +79,47 @@ const resetPopResult = (event: any) => {
   }
   showResetPop.value = false;
 };
+
+onIonViewWillEnter(() => {
+  console.log("Vérification de mise a jour...")
+  fetch('https://raw.githubusercontent.com/Cleboost/frite-counter/main/package.json')
+      .then(response => response.json())
+      .then(async data => {
+        // Utilisez les données JSON comme vous le souhaitez
+        console.log(data.version);
+        if (versionApp != data.version) {
+          const alert = await alertController.create({
+            header: 'Mise a jour !',
+            subHeader: 'Une mise a jour est disponible.',
+            message: '',
+            buttons: ["Télécharger"],
+          });
+
+          await alert.present();
+
+          alert.onDidDismiss().then(async () => {
+            fetch('https://download.cleboost.ovh/frite/download.php')
+                .then(response => response.blob())
+                .then(blob => {
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'latest.apk';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                  console.error('Erreur lors du téléchargement du fichier :', error);
+                });
+          });
+        } else {
+          console.log("Aucune mise a jour disponible")
+        }
+      })
+      .catch(error => {
+        console.log('Une erreur s\'est produite lors de la récupération du fichier JSON :', error);
+      });
+});
 </script>
 
 <template>

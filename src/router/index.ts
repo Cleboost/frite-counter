@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: 'recipe',
-        component: () => import('../views/RecipePage.vue'),
+        component: () => import('../views/RecipeListPage.vue'),
       },
       {
         path: 'settings',
@@ -35,7 +35,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/recipe/:id',
-    component: () => import('../views/ViewRecipePage.vue')
+    component: () => import('../views/RecipePage.vue')
   }
 ]
 
