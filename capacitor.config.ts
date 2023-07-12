@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'fr.cleboost.frite',
   appName: 'frite counter',
   webDir: 'dist',
   server: {

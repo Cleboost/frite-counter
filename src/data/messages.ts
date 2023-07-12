@@ -7,7 +7,7 @@ export interface Message {
 
 const messages: Message[] = [
   {
-    fromName: 'Matt Chorsey',
+    fromName: 'Cleboost',
     subject: 'New event: Trip to Vegas',
     date: '9:32 AM',
     id: 0
