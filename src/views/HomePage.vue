@@ -19,7 +19,7 @@ import { add } from "ionicons/icons";
 import { ref } from "vue";
 import { onMounted } from 'vue';
 
-const list = ref(<number[]>[]);
+const list = ref(<string[]>[]);
 const showResetPop = ref(false);
 const resetPopButtons = [
   {
@@ -55,10 +55,11 @@ const resetList = () => {
 };
 
 const addUsage = () => {
-  if (list.value.length >= 9) {
+  if (list.value.length >= 10) {
     showResetPop.value = true;
   } else {
-    const newItem = list.value.length + 1;
+    const date = new Date();
+    const newItem = (date.toLocaleDateString() + ' ' + date.toLocaleTimeString()).toString();
     list.value.push(newItem);
     saveList();
   }
@@ -100,7 +101,7 @@ const resetPopResult = (event: any) => {
       <ion-list>
         <ion-item v-for="message in list" :key="message">
           <ion-label>
-            <h2>{{ message }}</h2>
+            <h2><span style="font-weight: bold">{{ list.indexOf(message) + 1 }}.</span>    {{ message }}</h2>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -113,8 +114,9 @@ const resetPopResult = (event: any) => {
     </ion-fab>
 
     <ion-alert
-        v-model="showResetPop"
-        header="Alerte !"
+        :is-open="showResetPop"
+        header="Il est temps de changer l'huile !"
+        message="Une friteuse ne peux faire que 10 utilisations de la meme huile."
         :buttons="resetPopButtons"
         @ionAlertDidDismiss="resetPopResult"
     ></ion-alert>

@@ -19,23 +19,23 @@ const routes: Array<RouteRecordRaw> = [
         path: 'home',
         component: () => import('../views/HomePage.vue'),
       },
-      /*{
-        path: 'radio',
-        component: () => import('../views/RadioPage.vue'),
+      {
+        path: 'recipe',
+        component: () => import('../views/RecipePage.vue'),
       },
       {
-        path: 'library',
-        component: () => import('../views/LibraryPage.vue'),
+        path: 'settings',
+        component: () => import('../views/SettingsPage.vue'),
       },
       {
-        path: 'search',
-        component: () => import('../views/SearchPage.vue'),
-      },*/
+        path: 'credit',
+        component: () => import('../views/CreditPage.vue'),
+      },
     ],
   },
   {
-    path: '/message/:id',
-    component: () => import('../views/ViewMessagePage.vue')
+    path: '/recipe/:id',
+    component: () => import('../views/ViewRecipePage.vue')
   }
 ]
 
