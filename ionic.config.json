@@ -1,0 +1,8 @@
+{
+  "name": "frite counter",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite",
+  "id": "b43a6978"
+}
