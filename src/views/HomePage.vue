@@ -19,7 +19,7 @@ import { add } from "ionicons/icons";
 import { ref } from "vue";
 import { onMounted } from 'vue';
 
-const list = ref([]);
+const list = ref(<number[]>[]);
 const showResetPop = ref(false);
 const resetPopButtons = [
   {
