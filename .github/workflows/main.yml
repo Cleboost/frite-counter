@@ -1,0 +1,77 @@
+name: Build and Release APK
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+          
+      - name: Clear npm cache
+        run: npm cache clean --force
+        
+      - name: Install packages
+        run: npm i
+
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Set up NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
+      - name: Build Android
+        run: |
+          npx cap add android
+          npx cap copy
+          cd android
+          ./gradlew assembleDebug
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: app-debug
+          path: artifacts
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload APK
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./artifacts/app-debug.apk
+          asset_name: app-debug-${{ github.run_number }}.apk
+          asset_content_type: application/vnd.android.package-archive
