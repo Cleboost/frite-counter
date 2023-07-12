@@ -33,7 +33,6 @@ jobs:
 
       - name: Build Android
         run: |
-          npx cap sync
           npx cap add android
           npx cap copy
           cd android
