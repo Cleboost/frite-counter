@@ -17,7 +17,7 @@ import {
 import {ref, onMounted, UnwrapRef, Ref} from "vue";
 import QRCode from 'qrcode.vue';
 
-const dropdownItems = ref([]);
+const dropdownItems = ref([{id: 1, name: 'Chalon', code: "CHALON"}]);
 const activeFamillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") == null ? "Aucun code" : localStorage.getItem("famillyCode")!);
 
 onMounted(() => {
@@ -30,18 +30,16 @@ const loadlist = () => {
     dropdownItems.value = JSON.parse(list);
   }
 };
-
 const isOpen = ref({});
-
-const toggleDropdown = (itemId) => {isOpen.value = { ...isOpen.value, [itemId]: !isOpen.value[itemId] };};
-const isActive = (famillyCode) => {
+const toggleDropdown = (itemId: number) => {isOpen.value = { ...isOpen.value, [itemId]: !isOpen.value[itemId] };};
+const isActive = (famillyCode: string) => {
   if (activeFamillyCode.value == famillyCode) {
     return true;
   } else {
     return true;
   }
 };
-const activeFamilly = (famillyCode) => {
+const activeFamilly = (famillyCode: string) => {
   localStorage.setItem("famillyCode", famillyCode);
   activeFamillyCode.value = famillyCode;
 };
@@ -179,22 +177,22 @@ const leaveFamilly = (famillyCode) => {
         <ion-button fill="clear" @click="joinFamilly()">Rejoindre famille</ion-button>
       </ion-card>
       <ion-list inset>
-        <ion-list v-for="item in dropdownItems" :key="item.id">
+        <ion-list v-for="family in dropdownItems">
           <ion-item>
-            <ion-label>{{ item.name }}</ion-label>
-            <ion-button slot="end" @click="toggleDropdown(item.id)">
-              {{ isOpen[item.id] ? 'Fermer' : 'Infos' }}
+            <ion-label>{{ family.name }}</ion-label>
+            <ion-button slot="end" @click="toggleDropdown(family.id)">
+              {{ isOpen[family.id] ? 'Fermer' : 'Infos' }}
             </ion-button>
-            <ion-button slot="end" @click="activeFamilly(item.code)">
-              {{ isActive[item.code] ? 'regdfgdfg' : 'Activer' }}
+            <ion-button slot="end" @click="activeFamilly(family.code)">
+              {{ isActive[family.code] ? 'regdfgdfg' : 'Activer' }}
             </ion-button>
           </ion-item>
-          <ion-list v-show="isOpen[item.id]" class="sublist">
-            <QRCode :value="item.code" />
-            <h6>Votre code de famille est {{ item.code }}</h6>
+          <ion-list v-show="isOpen[family.id]" class="sublist">
+            <QRCode :value="family.code" />
+            <h6>Votre code de famille est {{ family.code }}</h6>
             <ion-item>
               <ion-button fill="clear" @click="">Partager</ion-button>
-              <ion-button fill="clear" @click="leaveFamilly(item.code)">Supprimer</ion-button>
+              <ion-button fill="clear" @click="leaveFamilly(family.code)">Supprimer</ion-button>
             </ion-item>
           </ion-list>
         </ion-list>
