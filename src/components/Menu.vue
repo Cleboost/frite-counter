@@ -13,7 +13,12 @@
           <ion-label>Recettes</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="library" href="/settings">
+        <ion-tab-button tab="familly" href="/familly">
+          <ion-icon :icon="body" />
+          <ion-label>Famille</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="settings" href="/settings">
           <ion-icon :icon="settings" />
           <ion-label>Paramètre</ion-label>
         </ion-tab-button>
@@ -30,7 +35,7 @@
 <script lang="ts">
 import { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon } from '@ionic/vue';
 
-import { home, pizza, settings, newspaper } from 'ionicons/icons';
+import { home, pizza, settings, newspaper, body } from 'ionicons/icons';
 
 export default {
   components: { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon },
@@ -39,6 +44,7 @@ export default {
       home,
       pizza,
       settings,
+      body,
       newspaper,
     };
   },

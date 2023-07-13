@@ -1,4 +1,6 @@
 <script setup lang="ts">
+
+// �
 import {
   IonContent,
   IonHeader,
@@ -19,6 +21,7 @@ import { add } from "ionicons/icons";
 import { ref } from "vue";
 import { onMounted } from 'vue';
 import {getVersionApp} from "@/data/version";
+import JSConfetti from 'js-confetti'
 
 const versionApp = getVersionApp();
 const textUsage = localStorage.getItem("famillyState") == "true" ? "Liste des utilisations familliale" : "Lise de vos utilisations";
@@ -27,10 +30,7 @@ const showResetPop = ref(false);
 const resetPopButtons = [
   {
     text: "Annuler l'ajout",
-    role: 'cancel',
-    handler: () => {
-      console.log('Annuler l\'ajout');
-    },
+    role: 'cancel'
   },
   {
     text: 'Reset',
@@ -48,7 +48,6 @@ onMounted(() => {
 const saveList = () => {
   localStorage.setItem('list', JSON.stringify(list.value));
 };
-
 const resetList = () => {
   if (localStorage.getItem("famillyState") == "true") {
     fetch("https://download.cleboost.ovh/frite/api/reset.php?code="+localStorage.getItem("famillyCode"))
@@ -61,7 +60,6 @@ const resetList = () => {
     saveList();
   }
 };
-
 const addUsage = () => {
   if (localStorage.getItem("famillyState") == "true") {
     fetch("https://download.cleboost.ovh/frite/api/get.php?code="+localStorage.getItem("famillyCode"))
@@ -74,8 +72,13 @@ const addUsage = () => {
                 .then(response => response.json())
                 .then(data => {
                   const date = new Date();
-                  const newItem = (date.toLocaleDateString() + ' ' + date.toLocaleTimeString()).toString();
+                  const newItem = (date.toLocaleDateString() + '*' + date.getMilliseconds());
                   list.value.push(newItem);
+                  if (localStorage.getItem("animations") == "true") return;
+                  const confetti = new JSConfetti();
+                  confetti.addConfetti({
+                    emojis: ['🍟'],
+                  });
                 });
           }
         });
@@ -84,13 +87,17 @@ const addUsage = () => {
       showResetPop.value = true;
     } else {
       const date = new Date();
-      const newItem = (date.toLocaleDateString() + ' ' + date.toLocaleTimeString()).toString();
+      const newItem = (date.toLocaleDateString() + '*' + date.getMilliseconds());
       list.value.push(newItem);
       saveList();
+      if (localStorage.getItem("animations") == "true") return;
+      const confetti = new JSConfetti();
+      confetti.addConfetti({
+        emojis: ['🍟'],
+      });
     }
   }
 };
-
 const loadFirstList = () => {
   if (localStorage.getItem("famillyState") == "true") {
     fetch("https://download.cleboost.ovh/frite/api/get.php?code="+localStorage.getItem("famillyCode"))
@@ -105,28 +112,22 @@ const loadFirstList = () => {
     }
   }
 };
-
 const refresh = (ev: CustomEvent) => {
   setTimeout(() => {
     loadFirstList();
     ev.detail.complete();
   }, 1000);
 };
-
 const resetPopResult = (event: any) => {
   if (event.detail.role === 'confirm') {
     resetList();
   }
   showResetPop.value = false;
 };
-
 onIonViewWillEnter(() => {
-  console.log("Vérification de mise a jour...")
   fetch('https://raw.githubusercontent.com/Cleboost/frite-counter/main/package.json')
       .then(response => response.json())
       .then(async data => {
-        // Utilisez les données JSON comme vous le souhaitez
-        console.log(data.version);
         if (versionApp != data.version) {
           const alert = await alertController.create({
             header: 'Mise a jour !',
@@ -134,9 +135,7 @@ onIonViewWillEnter(() => {
             message: '',
             buttons: ["Télécharger"],
           });
-
           await alert.present();
-
           alert.onDidDismiss().then(async () => {
             fetch('https://download.cleboost.ovh/frite/download.php')
                 .then(response => response.blob())
@@ -153,7 +152,6 @@ onIonViewWillEnter(() => {
                 });
           });
         } else {
-          console.log("Aucune mise a jour disponible")
           loadFirstList();
         }
       })
@@ -179,7 +177,7 @@ onIonViewWillEnter(() => {
       <ion-list>
         <ion-item v-for="message in list" :key="message">
           <ion-label>
-            <h2><span style="font-weight: bold">{{ list.indexOf(message) + 1 }}.</span>    {{ message }}</h2>
+            <h2><span style="font-weight: bold">{{ list.indexOf(message) + 1 }}.</span>    {{ message.split("*")[0] }}</h2>
           </ion-label>
         </ion-item>
       </ion-list>

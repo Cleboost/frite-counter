@@ -24,6 +24,10 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/RecipeListPage.vue'),
       },
       {
+        path: 'familly',
+        component: () => import('../views/FamillyPage.vue'),
+      },
+      {
         path: 'settings',
         component: () => import('../views/SettingsPage.vue'),
       },

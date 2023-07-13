@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'fr.cleboost.frite',
-  appName: 'Frite Counter',
+  appName: 'Friteuse Manager',
   webDir: 'dist',
   server: {
     androidScheme: 'https'
