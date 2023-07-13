@@ -17,12 +17,7 @@ import {
 import {ref, onMounted, UnwrapRef, Ref } from "vue";
 import QRCode from 'qrcode.vue';
 
-interface itemFamily {
-  id: number;
-  name: string;
-  code: string;
-}
-const dropdownItems: Ref<itemFamily[]> = ref([]);
+const dropdownItems = ref([{id: 1, name: 'Chalon', code: "CHALON"}]);
 const activeFamillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") == null ? "Aucun code" : localStorage.getItem("famillyCode")!);
 
 onMounted(() => {
@@ -35,9 +30,16 @@ const loadList = () => {
     dropdownItems.value = JSON.parse(list);
   }
 };
-const isOpen: Map<number, boolean> = new Map<number, boolean>();
+const isOpen: Ref<any> = ref();
+const isOpenFamilly = (fId: number) => {
+  if (isOpen.value == fId) {
+    return true;
+  } else {
+    return false;
+  }
+};
 const toggleDropdown = (itemId: number) => {
-  isOpen.set(itemId, !isOpen.get(itemId));
+  isOpen.value = itemId;
 };
 const isActiveCode = (familyCode: string) => {
   if (activeFamillyCode.value == familyCode) {
@@ -188,13 +190,13 @@ const leaveFamilly = (famillyCode: string) => {
           <ion-item>
             <ion-label>{{ family.name }}</ion-label>
             <ion-button slot="end" @click="toggleDropdown(family.id)">
-              {{ isOpen.get(family.id) ? 'Fermer' : 'Infos' }}
+              {{ isOpenFamilly(family.id) ? 'Fermer' : 'Infos' }}
             </ion-button>
             <ion-button slot="end" @click="activeFamily(family.code)">
               {{ isActiveCode(family.code) ? 'regdfgdfg' : 'Activer' }}
             </ion-button>
           </ion-item>
-          <ion-list v-show="isOpen.get(family.id)" class="sublist">
+          <ion-list v-show="isOpenFamilly(family.id)" class="sublist">
             <QRCode :value="family.code" />
             <h6>Votre code de famille est {{ family.code }}</h6>
             <ion-item>
