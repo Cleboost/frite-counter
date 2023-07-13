@@ -16,7 +16,7 @@ import {getVersionApp} from "../data/version";
 let versionChecker: Ref<UnwrapRef<string>> = ref('Aucune mise a jour disponible');
 
 let noFamilly: Ref<UnwrapRef<boolean>> = ref(localStorage.getItem("famillyState") == null);
-let famillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") === null ? "Aucun code" : localStorage.getItem("famillyCode")!);
+let famillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") == null ? "Aucun code" : localStorage.getItem("famillyCode")!);
 
 let localState = localStorage.getItem("famillyState")
 let localCode = localStorage.getItem("famillyCode")
@@ -40,7 +40,11 @@ fetch('https://raw.githubusercontent.com/Cleboost/frite-counter/main/package.jso
 const createFamilly = () => {
   localStorage.setItem("famillyState", "true");
   localStorage.setItem("famillyCode", Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8));
-  localStorage.setItem("famillyCode", localStorage.getItem("famillyCode").toUpperCase());
+  const famillyCode = localStorage.getItem("famillyCode");
+  if (famillyCode !== null) {
+    localStorage.setItem("famillyCode", famillyCode.toUpperCase());
+  }
+
   noFamilly = ref(false)
   location.reload();
 };
