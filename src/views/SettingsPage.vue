@@ -11,12 +11,13 @@ import {
   IonToolbar,
   IonButton,
 } from "@ionic/vue";
-import {Ref, ref, UnwrapRef} from "vue";
+import {Ref, ref, UnwrapRef } from "vue";
 import {getVersionApp} from "../data/version";
 let versionChecker: Ref<UnwrapRef<string>> = ref('Aucune mise a jour disponible');
 
 let noFamilly: Ref<UnwrapRef<boolean>> = ref(localStorage.getItem("famillyState") == null);
-let famillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") == null ? "Aucun code" : localStorage.getItem("famillyCode"));
+let famillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") === null ? "Aucun code" : localStorage.getItem("famillyCode")!);
+
 let localState = localStorage.getItem("famillyState")
 let localCode = localStorage.getItem("famillyCode")
 
