@@ -50,6 +50,11 @@ const onAnimationChange = (event: ToggleCustomEvent) => {
     localStorage.setItem("animations", "false");
   }
 }
+
+const deleteAllData = () => {
+  localStorage.clear();
+  location.reload();
+}
 </script>
 
 <template>
@@ -85,7 +90,7 @@ const onAnimationChange = (event: ToggleCustomEvent) => {
           <ion-card-subtitle>Paramètre pour personne sensible</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <ion-toggle :enable-on-off-labels="true" @ionChange="onAnimationChange($event)">Annimations simplifié</ion-toggle>
+          <ion-button @click="deleteAllData()">Supprimer mes données</ion-button>
         </ion-card-content>
       </ion-card>
     </ion-content>

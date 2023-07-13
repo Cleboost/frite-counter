@@ -17,7 +17,12 @@ import {
 import {ref, onMounted, UnwrapRef, Ref } from "vue";
 import QRCode from 'qrcode.vue';
 
-const dropdownItems = ref([{id: 1, name: 'Chalon', code: "CHALON"}]);
+interface itemFamily {
+  id: number;
+  name: string;
+  code: string;
+}
+const dropdownItems: Ref<itemFamily[]> = ref([]);
 const activeFamillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") == null ? "Aucun code" : localStorage.getItem("famillyCode")!);
 
 onMounted(() => {
@@ -30,9 +35,6 @@ const loadList = () => {
     dropdownItems.value = JSON.parse(list);
   }
 };
-interface openStatus {
-  [key: string]: boolean;
-}
 const isOpen: Map<number, boolean> = new Map<number, boolean>();
 const toggleDropdown = (itemId: number) => {
   isOpen.set(itemId, !isOpen.get(itemId));

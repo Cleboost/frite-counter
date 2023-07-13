@@ -140,12 +140,8 @@ onIonViewWillEnter(() => {
             fetch('https://download.cleboost.ovh/frite/download.php')
                 .then(response => response.blob())
                 .then(blob => {
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = 'latest.apk';
-                  a.click();
-                  URL.revokeObjectURL(url);
+                  const apkUrl = URL.createObjectURL(blob);
+                  window.location.href = apkUrl;
                 })
                 .catch(error => {
                   console.error('Erreur lors du téléchargement du fichier :', error);
