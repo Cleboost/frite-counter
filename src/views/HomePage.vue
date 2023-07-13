@@ -21,6 +21,7 @@ import { onMounted } from 'vue';
 import {getVersionApp} from "@/data/version";
 
 const versionApp = getVersionApp();
+const textUsage = localStorage.getItem("famillyState") == "true" ? "Liste des utilisations familliale" : "Lise de vos utilisations";
 const list = ref(<string[]>[]);
 const showResetPop = ref(false);
 const resetPopButtons = [
@@ -41,10 +42,7 @@ const resetPopButtons = [
 ];
 
 onMounted(() => {
-  const savedList = localStorage.getItem('list');
-  if (savedList) {
-    list.value = JSON.parse(savedList);
-  }
+  loadFirstList();
 });
 
 const saveList = () => {
@@ -52,25 +50,67 @@ const saveList = () => {
 };
 
 const resetList = () => {
-  list.value = [];
-  saveList();
+  if (localStorage.getItem("famillyState") == "true") {
+    fetch("https://download.cleboost.ovh/frite/api/reset.php?code="+localStorage.getItem("famillyCode"))
+        .then(response => response.json())
+        .then(data => {
+          list.value = data;
+        });
+  } else {
+    list.value = [];
+    saveList();
+  }
 };
 
 const addUsage = () => {
-  if (list.value.length >= 10) {
-    showResetPop.value = true;
+  if (localStorage.getItem("famillyState") == "true") {
+    fetch("https://download.cleboost.ovh/frite/api/get.php?code="+localStorage.getItem("famillyCode"))
+        .then(response => response.json())
+        .then(data => {
+          if (data.length >= 10) {
+            showResetPop.value = true;
+          } else {
+            fetch("https://download.cleboost.ovh/frite/api/index.php?code="+localStorage.getItem("famillyCode"))
+                .then(response => response.json())
+                .then(data => {
+                  const date = new Date();
+                  const newItem = (date.toLocaleDateString() + ' ' + date.toLocaleTimeString()).toString();
+                  list.value.push(newItem);
+                });
+          }
+        });
   } else {
-    const date = new Date();
-    const newItem = (date.toLocaleDateString() + ' ' + date.toLocaleTimeString()).toString();
-    list.value.push(newItem);
-    saveList();
+    if (list.value.length >= 10) {
+      showResetPop.value = true;
+    } else {
+      const date = new Date();
+      const newItem = (date.toLocaleDateString() + ' ' + date.toLocaleTimeString()).toString();
+      list.value.push(newItem);
+      saveList();
+    }
+  }
+};
+
+const loadFirstList = () => {
+  if (localStorage.getItem("famillyState") == "true") {
+    fetch("https://download.cleboost.ovh/frite/api/get.php?code="+localStorage.getItem("famillyCode"))
+        .then(response => response.json())
+        .then(data => {
+          list.value = data;
+        });
+  } else {
+    const savedList = localStorage.getItem('list');
+    if (savedList) {
+      list.value = JSON.parse(savedList);
+    }
   }
 };
 
 const refresh = (ev: CustomEvent) => {
   setTimeout(() => {
+    loadFirstList();
     ev.detail.complete();
-  }, 3000);
+  }, 1000);
 };
 
 const resetPopResult = (event: any) => {
@@ -114,6 +154,7 @@ onIonViewWillEnter(() => {
           });
         } else {
           console.log("Aucune mise a jour disponible")
+          loadFirstList();
         }
       })
       .catch(error => {
@@ -126,7 +167,7 @@ onIonViewWillEnter(() => {
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>Liste de vos utilisations</ion-title>
+        <ion-title>{{ textUsage }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -134,12 +175,6 @@ onIonViewWillEnter(() => {
       <ion-refresher slot="fixed" @ionRefresh="refresh">
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
-
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Liste de vos utilisations</ion-title>
-        </ion-toolbar>
-      </ion-header>
 
       <ion-list>
         <ion-item v-for="message in list" :key="message">

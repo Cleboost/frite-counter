@@ -1,3 +1,3 @@
-const versionApp = '0.1.12';
+const versionApp = '0.2.01';
 
 export const getVersionApp = () => versionApp;
