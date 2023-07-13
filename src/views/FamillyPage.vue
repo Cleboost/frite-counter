@@ -14,36 +14,41 @@ import {
   alertController,
   IonCardContent
 } from "@ionic/vue";
-import {ref, onMounted, UnwrapRef, Ref} from "vue";
+import {ref, onMounted, UnwrapRef, Ref } from "vue";
 import QRCode from 'qrcode.vue';
 
 const dropdownItems = ref([{id: 1, name: 'Chalon', code: "CHALON"}]);
 const activeFamillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") == null ? "Aucun code" : localStorage.getItem("famillyCode")!);
 
 onMounted(() => {
-  loadlist();
+  loadList();
 });
 
-const loadlist = () => {
+const loadList = () => {
   const list = localStorage.getItem("famillyList");
   if (list != null) {
     dropdownItems.value = JSON.parse(list);
   }
 };
-const isOpen = ref({});
-const toggleDropdown = (itemId: number) => {isOpen.value = { ...isOpen.value, [itemId]: !isOpen.value[itemId] };};
-const isActive = (famillyCode: string) => {
-  if (activeFamillyCode.value == famillyCode) {
+interface openStatus {
+  [key: string]: boolean;
+}
+const isOpen: Map<number, boolean> = new Map<number, boolean>();
+const toggleDropdown = (itemId: number) => {
+  isOpen.set(itemId, !isOpen.get(itemId));
+};
+const isActiveCode = (familyCode: string) => {
+  if (activeFamillyCode.value == familyCode) {
     return true;
   } else {
     return true;
   }
 };
-const activeFamilly = (famillyCode: string) => {
-  localStorage.setItem("famillyCode", famillyCode);
-  activeFamillyCode.value = famillyCode;
+const activeFamily = (familyCode: string) => {
+  localStorage.setItem("familyCode", familyCode);
+  activeFamillyCode.value = familyCode;
 };
-const createFamilly = async () => {
+const createFamily = async () => {
     const alert = await alertController.create({
       header: 'Famille',
       subHeader: 'Créer une famille',
@@ -79,7 +84,7 @@ const createFamilly = async () => {
         localStorage.setItem("famillyList", JSON.stringify(listFamilly));
         activeFamillyCode.value = data.data.values.code;
         localStorage.setItem("famillyCode", data.data.values.code);
-        loadlist();
+        loadList();
       }
     });
 };
@@ -134,13 +139,13 @@ const joinFamilly = async () => {
             localStorage.setItem("famillyList", JSON.stringify(listFamilly));
             activeFamillyCode.value = data.data.values.code;
             localStorage.setItem("famillyCode", data.data.values.code);
-            loadlist();
+            loadList();
           }
         });
       }
     });
 };
-const leaveFamilly = (famillyCode) => {
+const leaveFamilly = (famillyCode: string) => {
   let listFamilly = JSON.parse(localStorage.getItem("famillyList") || '[]') as Array<any>;
   listFamilly.forEach((item, index) => {
     if (item.code == famillyCode) {
@@ -155,7 +160,7 @@ const leaveFamilly = (famillyCode) => {
   if (listFamilly.length == 0) {
     localStorage.setItem("famillyState", "false");
   }
-  loadlist();
+  loadList();
 };
 </script>
 
@@ -173,7 +178,7 @@ const leaveFamilly = (famillyCode) => {
           <ion-card-subtitle>Connecter plusieurs téléphone avec la liste partagée !</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>Actif {{ activeFamillyCode }}</ion-card-content>
-        <ion-button fill="clear" @click="createFamilly()">Créer famille</ion-button>
+        <ion-button fill="clear" @click="createFamily()">Créer famille</ion-button>
         <ion-button fill="clear" @click="joinFamilly()">Rejoindre famille</ion-button>
       </ion-card>
       <ion-list inset>
@@ -181,13 +186,13 @@ const leaveFamilly = (famillyCode) => {
           <ion-item>
             <ion-label>{{ family.name }}</ion-label>
             <ion-button slot="end" @click="toggleDropdown(family.id)">
-              {{ isOpen[family.id] ? 'Fermer' : 'Infos' }}
+              {{ isOpen.get(family.id) ? 'Fermer' : 'Infos' }}
             </ion-button>
-            <ion-button slot="end" @click="activeFamilly(family.code)">
-              {{ isActive[family.code] ? 'regdfgdfg' : 'Activer' }}
+            <ion-button slot="end" @click="activeFamily(family.code)">
+              {{ isActiveCode(family.code) ? 'regdfgdfg' : 'Activer' }}
             </ion-button>
           </ion-item>
-          <ion-list v-show="isOpen[family.id]" class="sublist">
+          <ion-list v-show="isOpen.get(family.id)" class="sublist">
             <QRCode :value="family.code" />
             <h6>Votre code de famille est {{ family.code }}</h6>
             <ion-item>
