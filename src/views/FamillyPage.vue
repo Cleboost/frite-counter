@@ -50,7 +50,7 @@ const isActiveCode = (familyCode: string) => {
   }
 };
 const activeFamily = (familyCode: string) => {
-  localStorage.setItem("familyCode", familyCode);
+  localStorage.setItem("famillyCode", familyCode);
   activeFamillyCode.value = familyCode;
 };
 const createFamily = async () => {

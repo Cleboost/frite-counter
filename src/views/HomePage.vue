@@ -1,6 +1,4 @@
 <script setup lang="ts">
-
-// �
 import {
   IonContent,
   IonHeader,
@@ -22,6 +20,9 @@ import { ref } from "vue";
 import { onMounted } from 'vue';
 import {getVersionApp} from "@/data/version";
 import JSConfetti from 'js-confetti'
+import { Plugins } from "@capacitor/core";
+import '@capacitor/browser';
+const { CapacitorInAppBrowser } = Plugins;
 
 const versionApp = getVersionApp();
 const textUsage = localStorage.getItem("famillyState") == "true" ? "Liste des utilisations familliale" : "Lise de vos utilisations";
@@ -137,15 +138,10 @@ onIonViewWillEnter(() => {
           });
           await alert.present();
           alert.onDidDismiss().then(async () => {
-            fetch('https://download.cleboost.ovh/frite/download.php')
-                .then(response => response.blob())
-                .then(blob => {
-                  const apkUrl = URL.createObjectURL(blob);
-                  window.location.href = apkUrl;
-                })
-                .catch(error => {
-                  console.error('Erreur lors du téléchargement du fichier :', error);
-                });
+            const options = {
+              url: "https://download.cleboost.ovh/frite/download.php"
+            };
+            CapacitorInAppBrowser.open(options);
           });
         } else {
           loadFirstList();

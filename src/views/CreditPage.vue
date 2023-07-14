@@ -6,7 +6,7 @@ const helperList = [
     "name": "Cleboost",
     "role": "Développement",
     "avatar": "https://cleboost.ovh/assets/images/avatar.svg",
-    "description": "Merci a Cleboost pour avoir developpé cette application."
+    "description": "Merci à Cleboost pour avoir developpé cette application."
   },
   {
     "name": "Fred",
