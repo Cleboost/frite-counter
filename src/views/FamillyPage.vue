@@ -18,6 +18,7 @@ import {ref, onMounted, UnwrapRef, Ref } from "vue";
 import QRCode from 'qrcode.vue';
 
 const dropdownItems = ref([{id: 1, name: 'Chalon', code: "CHALON"}]);
+dropdownItems.value = JSON.parse(localStorage.getItem("famillyList") || '[]') as Array<any>;
 const activeFamillyCode: Ref<UnwrapRef<string>> = ref(localStorage.getItem("famillyCode") == null ? "Aucun code" : localStorage.getItem("famillyCode")!);
 
 onMounted(() => {
